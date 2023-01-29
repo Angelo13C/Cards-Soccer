@@ -8,11 +8,12 @@ using UnityEngine;
 public class Card : ScriptableObject
 {
     [SerializeField] [Range(1, 10)]
-    private int _cost;
+    private int _cost = 1;
     public int Cost => _cost;
     
     [SerializeField]
     private Sprite _sprite;
+    public Sprite Sprite => _sprite;
 
     [SerializeReference]
     public Effect Effect;
