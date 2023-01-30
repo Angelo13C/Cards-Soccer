@@ -22,7 +22,8 @@ public class Card : ScriptableObject
     {
         Effect.Use();
     }
-
+    
+#if UNITY_EDITOR
     private void OnEnable() {
         var cardDirectoryPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(this));
 
@@ -60,4 +61,5 @@ public class Card : ScriptableObject
             }
         }
     }
+#endif
 }
