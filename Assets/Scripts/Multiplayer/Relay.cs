@@ -6,24 +6,49 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Relay;
 using UnityEngine;
+using Unity.Services.Core.Environments;
+using UnityEngine.SceneManagement;
 
-public class Relay : MonoBehaviour
+public class Relay : NetworkBehaviour
 {
     [SerializeField] private TextMeshProUGUI _joinCodeLabel;
     [SerializeField] private TMP_InputField _joinCodeTextField;
 
     private async void Start()
     {
-        await UnityServices.InitializeAsync();
-        
+        DontDestroyOnLoad(gameObject);
+
+        var options = new InitializationOptions();
+
+        options.SetEnvironmentName("development");
+        await UnityServices.InitializeAsync(options);
+
         AuthenticationService.Instance.SignedIn += () => {
             Debug.Log("The player " + AuthenticationService.Instance.PlayerId + " signed in");
         };
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        
+
         NetworkManager.Singleton.OnClientConnectedCallback += id => {
             Debug.Log("Client " + id.ToString() +  " connected");
+            if(NetworkManager.Singleton.IsServer)
+            {
+                if(NetworkManager.Singleton.ConnectedClients.Count == 2)
+                {
+                    FinishLoadingMatchClientRpc();
+                }
+            }
         };
+    }
+
+    private void StartLoadingMatch()
+    {
+        SceneManager.LoadSceneAsync("Match", LoadSceneMode.Additive);
+    }
+
+    [ClientRpc]
+    private void FinishLoadingMatchClientRpc()
+    {
+        SceneManager.UnloadSceneAsync("Menu");
     }
 
     public async void CreateRelay()
@@ -33,6 +58,8 @@ public class Relay : MonoBehaviour
             
             var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             _joinCodeLabel.text = joinCode;
+            
+            StartLoadingMatch();
 
             var relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
@@ -49,6 +76,8 @@ public class Relay : MonoBehaviour
         try {
             var joinCode = _joinCodeTextField.text;
             var allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            
+            StartLoadingMatch();
 
             var relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
