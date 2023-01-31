@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d226e9311c18f9642a38a49d9f1b7398, type: 3}
+  m_Name: Score (Game Mode)
+  m_EditorClassIdentifier: 
+  _playerPrefab: {fileID: 3100234008148626155, guid: 6a5c689f8a6986f4f87792d56d2b2e95, type: 3}
+  _team1: {fileID: 11400000, guid: 8d59c71a1f34f564cb50b18b0cdb21b9, type: 2}
+  _team2: {fileID: 11400000, guid: a15117084b58d4d49b041fb9a85c4c90, type: 2}

@@ -14,6 +14,8 @@ public class Relay : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI _joinCodeLabel;
     [SerializeField] private TMP_InputField _joinCodeTextField;
 
+    [SerializeField] private GameModeSelector _gameModeSelector;
+
     private async void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -42,7 +44,12 @@ public class Relay : NetworkBehaviour
 
     private void StartLoadingMatch()
     {
-        SceneManager.LoadSceneAsync("Match", LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync("Match", LoadSceneMode.Additive).completed += scene => {
+            if(NetworkManager.Singleton.IsServer)
+            {
+                _gameModeSelector.Selected.Prepare();
+            }
+        };
     }
 
     [ClientRpc]
